@@ -1,0 +1,13 @@
+extrinsic_imu2base_quat_xyzw_xyz: [0.00260242, -0.000189964, 0.714824, -0.6993, 0.00151982, -0.0046825, -0.0775784]
+extrinsic_lidar2base_quat_xyzw_xyz: [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]
+initialization_phase: false
+base_frame: base
+imu_topic: /alphasense_driver_ros/imu
+imu_frame: imu_sensor_frame
+lidar_topic: /hesai/pandar
+lidar_frame: pandar
+odom_topic: /rko_lio/odometry
+odom_frame: odom
+invert_odom_tf: false
+publish_local_map: true
+map_topic: /rko_lio/local_map
