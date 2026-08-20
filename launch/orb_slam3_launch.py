@@ -11,11 +11,8 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     project_dir = get_package_share_directory('orb_slam3_bringup')
-    
-    # --- ADD THIS: Path to your ORBvoc.txt ---
-    # UPDATE THIS PATH to wherever your ORBvoc.txt is actually saved!
-    # Common location: '/home/pc/Doktorat/other/orbslam_ws/src/orb_slam3/Vocabulary/ORBvoc.txt'
-    voc_file_path = '$BENCHMARK_DIR/src/orb_slam3_ros/orb_slam3_ros/modules/ORB_SLAM3/Vocabulary/ORBvoc.txt'
+
+    voc_file_path = 'REPO_ROOT/src/orb_slam3_ros/orb_slam3_ros/modules/ORB_SLAM3/Vocabulary/ORBvoc.txt'
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -24,7 +21,6 @@ def generate_launch_description():
             description='Use IMU data?'
         ),
         
-        # ORB-SLAM3 Monocular tracking node
         Node(
             package='orb_slam3_ros',
             executable='orb_slam3_ros_mono',
@@ -41,7 +37,6 @@ def generate_launch_description():
             condition=UnlessCondition(LaunchConfiguration('use_imu_data')),
         ),
 
-        # ORB-SLAM3 Monocular Inertial tracking node
         Node(
             package='orb_slam3_ros',
             executable='orb_slam3_ros_mono_imu',
