@@ -8,14 +8,11 @@ import glob
 import shutil
 
 # --- DYNAMIC REPOSITORY PATHS ---
-# This automatically finds the root of the repository based on where this script is located
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))
 
-# Point to the datasets and results folders at the root of the repo
 RESULTS_BASE_DIR = os.path.join(REPO_ROOT, "results")
 
-# Update these paths based on how you decide to organize your datasets folder
 BAGS_SOURCE_DIRS = [
     os.path.join(REPO_ROOT, "datasets", "2024-03-18-christ-church-02", "raw", "ros2bag", "multi_new"),
     os.path.join(REPO_ROOT, "datasets", "2024-03-20-christ-church-05", "raw", "ros2bag", "multi_new")
@@ -146,7 +143,6 @@ def run_test(algo_name, target_bag_path, seq_name, clean_bag_name):
     try:
         if config.get('uses_tum_recorder', True):
             print(f"[1/3] Starting TUM recorder on {config['odom_topic']}...")
-            # Use SCRIPT_DIR to strictly locate the companion record_tum.py file
             recorder_cmd = f"python3 {SCRIPT_DIR}/record_tum.py {config['odom_topic']} {tum_output_file} {config['msg_type']}"
             recorder_proc = subprocess.Popen(recorder_cmd, shell=True, preexec_fn=os.setsid)
             processes.append(recorder_proc)

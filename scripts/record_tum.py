@@ -17,11 +17,9 @@ class TumRecorder(Node):
         self.last_msg_time = time.time()
         self.start_time = time.time()
         
-        # Timeouts (in seconds)
         self.timeout_first_msg = 30.0  
         self.timeout_silence = 5.0     
         
-        # Dynamically choose the subscriber type
         if msg_type == "PoseStamped":
             self.subscription = self.create_subscription(
                 PoseStamped, topic_name, self.pose_callback, 10)
