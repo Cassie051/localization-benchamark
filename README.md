@@ -7,10 +7,17 @@ This repository contains the configuration files, launch scripts, and evaluation
 * **FAST-LIO2** (Tightly-coupled Iterated Kalman Filter)
 * **GLIM** (Factor Graph Optimization with 3D Submaps)
 * **RKO-LIO** (LiDAR-Inertial Odometry)
-* **ORB-SLAM3** (Visual-Inertial Optimization)
+* **ORB-SLAM3** (Visual-Inertial Optimization, monocular-inertial mode)
+* **KISS-ICP** (LiDAR-only Point-to-Point ICP; no configuration file is needed, the LiDAR topic is remapped in `scripts/benchmark_runner.py`)
+* **TSformer-VO** (learning-based monocular visual odometry; evaluated with the original implementation, see the paper)
 
 ### Dataset
 This benchmark is pre-configured to run on the [Oxford Spires Dataset](https://dynamic.robots.ox.ac.uk/datasets/oxford-spires/).
+The recordings do not contain a TF tree, so the IMU–LiDAR extrinsic is set explicitly in every configuration; all
+configurations use the official Oxford Spires calibration.
+
+The sequences `2024-03-18-christ-church-02` and `2024-03-20-christ-church-05` are split into Indoor, Outdoor and
+Transition segments; the segment timestamps and the segmentation rule are given in [`segmentation/`](segmentation/README.md).
 
 
 ## 📂 Repository Structure
@@ -23,6 +30,10 @@ This benchmark is pre-configured to run on the [Oxford Spires Dataset](https://d
 │   ├── orb_slam3/          
 │   └── rko_lio/            
 │
+├── segmentation/           # Indoor / Outdoor / Transition segment timestamps of the evaluated sequences
+│   ├── crossings.csv
+│   └── timestamps/
+│
 ├── launch/                 # Custom ROS 2 launch files for running the algorithms
 │   └── orb_slam3_launch.py 
 │
@@ -31,8 +42,15 @@ This benchmark is pre-configured to run on the [Oxford Spires Dataset](https://d
 │   └── record_tum.py       
 │
 └── third_party/            # Submodules for the original algorithm source code
-    ├── ros2_ws/            
-    └── standalone/         
+    ├── ros2_ws/src/        # ROS 2 packages
+    │   ├── FAST_LIO_ROS2/  #   FAST-LIO2 (ROS 2 port)
+    │   ├── glim/           #   GLIM
+    │   ├── glim_ros2/      #   GLIM ROS 2 interface
+    │   ├── kiss-icp/       #   KISS-ICP
+    │   ├── rko_lio/        #   RKO-LIO
+    │   └── orb_slam3_ros/  #   ORB-SLAM3 (ROS 2 wrapper)
+    └── standalone/
+        └── tsformer-vo-oxford-spires/   # TSformer-VO experiments
 
 ```
 
@@ -44,8 +62,8 @@ This benchmark is pre-configured to run on the [Oxford Spires Dataset](https://d
 Because the actual SLAM algorithms are linked as Git submodules inside the `third_party` folder, you **must** use the `--recursive` flag when cloning:
 
 ```bash
-git clone --recursive https://github.com/Cassie051/localization-benchmark.git
-cd localization-benchmark
+git clone --recursive https://github.com/Cassie051/localization-benchamark.git
+cd localization-benchamark
 ```
 
 ### 2. Prerequisites
@@ -64,7 +82,7 @@ pip install -r requirements.txt
 
 The algorithms are separated into ROS 2 packages and standalone CMake packages. You can build them using our provided setup script (if available in your root directory) or build them manually:
 
-**For ROS 2 Packages (FAST-LIO2, RKO-LIO, etc.):**
+**For ROS 2 Packages (FAST-LIO2, GLIM, KISS-ICP, RKO-LIO, ORB-SLAM3):**
 
 ```bash
 source /opt/ros/jazzy/setup.bash
@@ -72,8 +90,10 @@ cd third_party/ros2_ws
 colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 ```
 
-**For Standalone Packages (ORB-SLAM3):**
-Navigate into `third_party/standalone/orb_slam3` and follow the standard build instructions provided by the original authors (usually `./build.sh`).
+Some packages have additional system dependencies (e.g. GTSAM and CUDA for the GPU version of GLIM, Pangolin and OpenCV for ORB-SLAM3); see the README of each package.
+
+**For Standalone Packages (TSformer-VO):**
+Follow the instructions in `third_party/standalone/tsformer-vo-oxford-spires`.
 
 ### 4. Source the Environment
 
@@ -86,15 +106,14 @@ source third_party/ros2_ws/install/setup.bash
 
 ---
 
-Because the updated `benchmark_runner.py` script is now a fully automated "batch runner" (it automatically iterates through all sequences, matches uncompressed bags for ORB-SLAM3, and executes all algorithms without needing command-line flags), the `Usage` section of the README needs to be simplified to reflect this powerful new workflow.
-
-Here is the updated **Usage** section. You can copy and paste this to replace the `## 🚀 Usage` section in your `README.md`:
+## 🚀 Usage` section in your `README.md`:
 
 
 ## 🚀 Usage
 
 ### 1. Data Preparation
-Create a `datasets/` folder at the root of the repository. Place your ROS 2 bags inside. The script expects the baseline bags and any uncompressed variants (required for ORB-SLAM3) to be located in these directories.
+Create a `datasets/` folder at the root of the repository. Place your ROS 2 bags inside; to reproduce the paper, cut
+the segments listed in `segmentation/timestamps/` from the original Oxford Spires recordings. The script expects the baseline bags and any uncompressed variants (required for ORB-SLAM3) to be located in these directories.
 
 ### 2. Running the Benchmark Pipeline
 The benchmarking process is fully automated. Simply run the main execution script from the root of the repository:
@@ -113,14 +132,33 @@ Once the trajectories are populated in the `results/` folder.
 
 
 
+## ⚖️ License
+
+The code and configuration files in this repository are released under the [MIT License](LICENSE)
+(Copyright (c) 2026 Katarzyna Kijania and contributors).
+
+* The files in `configs/fastlio/` and `configs/orb_slam3/` follow the configuration formats of
+  [FAST-LIO2](https://github.com/hku-mars/FAST_LIO) (GPL-2.0) and [ORB-SLAM3](https://github.com/UZ-SLAMLab/ORB_SLAM3) (GPL-3.0).
+  These programs are not included in this repository and remain under their own licenses.
+* The segment timestamps in `segmentation/` are derived from the
+  [Oxford Spires Dataset](https://dynamic.robots.ox.ac.uk/datasets/oxford-spires/) and are provided under the same license as the dataset,
+  [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). If you use them, please also cite the Oxford Spires Dataset.
+* Submodules in `third_party/` keep their own licenses.
+
 ## 📜 Citation
 
-If you use this benchmark structure, configurations, or evaluation scripts in your research, please cite our paper:
+If you use this benchmark structure, configurations, segmentation, or evaluation scripts in your research, please cite our paper:
+
+> K. Kijania, J. Dybała, P. Duszak, "A Comparative Study of Mobile Robot Localization Methods in Indoor–Outdoor Transition Scenarios", *Scientific Reports*, 2026 (under review).
 
 ```bibtex
-@article{your_paper_id_2026,
-  title={},
-  author={},
-  journal={},
-  year={2026}
+@article{kijania2026indooroutdoor,
+  title   = {A Comparative Study of Mobile Robot Localization Methods in Indoor--Outdoor Transition Scenarios},
+  author  = {Kijania, Katarzyna and Dyba{\l}a, Jacek and Duszak, Piotr},
+  journal = {Scientific Reports},
+  year    = {2026},
+  note    = {Under review}
 }
+```
+
+Please also cite the [Oxford Spires Dataset](https://dynamic.robots.ox.ac.uk/datasets/oxford-spires/) and the original papers of the evaluated algorithms.
