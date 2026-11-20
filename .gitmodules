@@ -1,0 +1,21 @@
+[submodule "third_party/standalone/tsformer-vo-oxford-spires"]
+	path = third_party/standalone/tsformer-vo-oxford-spires
+	url = https://github.com/piotrdusz/tsformer-vo-oxford-spires.git
+[submodule "third_party/ros2_ws/src/FAST_LIO_ROS2"]
+	path = third_party/ros2_ws/src/FAST_LIO_ROS2
+	url = https://github.com/Ericsii/FAST_LIO_ROS2.git
+[submodule "third_party/ros2_ws/src/glim"]
+	path = third_party/ros2_ws/src/glim
+	url = https://github.com/koide3/glim.git
+[submodule "third_party/ros2_ws/src/glim_ros2"]
+	path = third_party/ros2_ws/src/glim_ros2
+	url = https://github.com/koide3/glim_ros2.git
+[submodule "third_party/ros2_ws/src/kiss-icp"]
+	path = third_party/ros2_ws/src/kiss-icp
+	url = https://github.com/PRBonn/kiss-icp.git
+[submodule "third_party/ros2_ws/src/rko_lio"]
+	path = third_party/ros2_ws/src/rko_lio
+	url = https://github.com/PRBonn/rko_lio.git
+[submodule "third_party/ros2_ws/src/orb_slam3_ros"]
+	path = third_party/ros2_ws/src/orb_slam3_ros
+	url = https://github.com/clydemcqueen/orb_slam3_ros.git
