@@ -106,9 +106,6 @@ source third_party/ros2_ws/install/setup.bash
 
 ---
 
-## 🚀 Usage` section in your `README.md`:
-
-
 ## 🚀 Usage
 
 ### 1. Data Preparation
