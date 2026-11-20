@@ -30,10 +30,10 @@
             fov_degree: 360.0
             det_range: 60.0
             extrinsic_est_en:  false      # true: enable the online estimation of IMU-LiDAR extrinsic
-            extrinsic_T: [ 0.0, 0.0, 0.0 ]
-            extrinsic_R: [1., 0., 0.,
-                        0., 1., 0.,
-                        0., 0., 1.]
+            extrinsic_T: [-0.00065, -0.01551, 0.08463]
+            extrinsic_R: [-0.01664, -0.99986,  0.00172,
+                        0.99986, -0.01663,  0.00358,
+                        -0.00356,  0.00178,  0.99999]
 
         publish:
             map_en: false
