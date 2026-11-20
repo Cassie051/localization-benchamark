@@ -1,0 +1,3 @@
+[submodule "third_party/standalone/tsformer-vo-oxford-spires"]
+	path = third_party/standalone/tsformer-vo-oxford-spires
+	url = https://github.com/piotrdusz/tsformer-vo-oxford-spires.git
